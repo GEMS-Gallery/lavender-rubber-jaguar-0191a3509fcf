@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { backend } from 'declarations/backend';
-import { Container, Typography, Box, CircularProgress } from '@mui/material';
+import { Container, Typography, Box, CircularProgress, useTheme, IconButton } from '@mui/material';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import DataTable from 'react-data-table-component';
 import TaxPayerForm from './components/TaxPayerForm';
 import SearchForm from './components/SearchForm';
+import { useThemeContext } from './components/ThemeProvider';
 
 type TaxPayer = {
   tid: string;
@@ -38,6 +41,8 @@ const columns = [
 function App() {
   const [taxPayers, setTaxPayers] = useState<TaxPayer[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toggleColorMode } = useThemeContext();
+  const theme = useTheme();
 
   useEffect(() => {
     fetchTaxPayers();
@@ -86,9 +91,14 @@ function App() {
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          TaxPayer Record Management
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            TaxPayer Record Management
+          </Typography>
+          <IconButton onClick={toggleColorMode} color="inherit">
+            {theme.palette.mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+          </IconButton>
+        </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
           <SearchForm onSearch={handleSearch} />
           <TaxPayerForm onSubmit={handleAddTaxPayer} />
@@ -104,6 +114,7 @@ function App() {
             pagination
             responsive
             highlightOnHover
+            theme={theme.palette.mode}
           />
         )}
       </Box>
